@@ -51,7 +51,7 @@ python main.py \
 
 Start the API server:
 ```bash
-python deploy.py
+python deploy.py --port 9557
 ```
 
 The service will run on `http://127.0.0.1:9557`. It accepts HTTP requests with `image_path` and `language` parameters.
