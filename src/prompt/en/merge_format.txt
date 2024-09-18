@@ -1,0 +1,27 @@
+### Output format:
+1. Formal Features Analysis
+[Formal feature analysis 1 (Positive or Negative or Neutral)]
+...
+[Formal feature analysis 2 (Positive or Negative or Neutral)]
+
+2. House Content Analysis
+[House content analysis 1 (Positive or Negative or Neutral)]
+...
+[House content analysis 2 (Positive or Negative or Neutral)]
+
+3. Tree Content Analysis
+[Tree content analysis 1 (Positive or Negative or Neutral)]
+...
+[Tree content analysis 2 (Positive or Negative or Neutral)]
+
+4. Person Content Analysis
+[Person content analysis 1 (Positive or Negative or Neutral)]
+...
+[Person content analysis 2 (Positive or Negative or Neutral)]
+
+5. Tendency Summary
+Total number of positive signals: (a number)
+Total number of negative signals: (a number)
+Total number of neutral signals: (a number)
+
+NOTE: Neutral signals are not significant. You should provide some reminders based on the severity of the negative and positive signals.

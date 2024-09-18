@@ -1,0 +1,1 @@
+streamlit run src/Main\ Page.py
