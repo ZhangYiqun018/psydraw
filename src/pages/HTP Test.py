@@ -1,4 +1,5 @@
 import base64
+import os
 from io import BytesIO
 
 import requests
@@ -238,9 +239,9 @@ def main() -> None:
         
     # Initialize session state variables if not present
     if 'api_key' not in st.session_state:
-        st.session_state['api_key'] = ""
+        st.session_state['api_key'] = os.getenv("OPENAI_API_KEY") or ""
     if 'base_url' not in st.session_state:
-        st.session_state['base_url'] = BASE_URL
+        st.session_state['base_url'] = BASE_URL or os.getenv("OPENAI_BASE_URL")
     if 'language' not in st.session_state:
         st.session_state['language'] = 'English'
     if 'language_code' not in st.session_state:
