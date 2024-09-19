@@ -28,11 +28,12 @@ LANGUAGES = {
         "instructions": """
             **Please read the following instructions carefully:**
 
-            1. **Drawing Requirements**: On a piece of white paper, use a pencil to draw a picture that includes a **house**, **trees**, and a **person**.
-            2. **Be Creative**: Feel free to draw as you like. There are no right or wrong drawings.
-            3. **No Aids**: Do not use rulers, erasers, or any drawing aids.
-            4. **Take Your Time**: There is no time limit. Take as much time as you need.
-            5. **Upload the Drawing**: Once you've completed your drawing, take a clear photo or scan it, and upload it using the sidebar.
+            1. **Fill the API Key**: Fill the API Key in the sidebar to authenticate with the OpenAI API.
+            2. **Drawing Requirements**: On a piece of white paper, use a pencil to draw a picture that includes a **house**, **trees**, and a **person**.
+            3. **Be Creative**: Feel free to draw as you like. There are no right or wrong drawings.
+            4. **No Aids**: Do not use rulers, erasers, or any drawing aids.
+            5. **Take Your Time**: There is no time limit. Take as much time as you need.
+            6. **Upload the Drawing**: Once you've completed your drawing, take a clear photo or scan it, and upload it using the sidebar.
 
             **Note**: All information collected in this test will be kept strictly confidential.
         """,
@@ -66,11 +67,12 @@ LANGUAGES = {
         "instructions": """
             **请仔细阅读以下说明：**
 
-            1. **绘画要求**：在一张白纸上，使用铅笔画一幅包含 **房子**、**树木** 和 **人** 的画。
-            2. **发挥创意**：尽情绘画，没有对错之分。
-            3. **不使用辅助工具**：不要使用尺子、橡皮或任何绘画辅助工具。
-            4. **不限时间**：没有时间限制，你可以尽可能多地花时间。
-            5. **上传绘画**：完成绘画后，拍一张清晰的照片或扫描，然后使用侧边栏上传。
+            1. **填写 API 密钥**：在侧边栏中填写 API 密钥以与 OpenAI API 进行身份验证。
+            2. **绘画要求**：在一张白纸上，使用铅笔画一幅包含 **房子**、**树木** 和 **人** 的画。
+            3. **发挥创意**：尽情绘画，没有对错之分。
+            4. **不使用辅助工具**：不要使用尺子、橡皮或任何绘画辅助工具。
+            5. **不限时间**：没有时间限制，你可以尽可能多地花时间。
+            6. **上传绘画**：完成绘画后，拍一张清晰的照片或扫描，然后使用侧边栏上传。
 
             **注意**：本测试收集的所有信息将被严格保密。
         """,
@@ -159,14 +161,7 @@ def sidebar(model) -> None:
     """Render sidebar components."""
     st.sidebar.image("assets/logo2.png", use_column_width=True)
     
-    st.sidebar.markdown(f"## {get_text('model_settings')}")
-    base_url = st.sidebar.text_input("API Base URL", value=BASE_URL, help="Base URL of the API server")
-    api_key = st.sidebar.text_input("API Key", help="API Key for authentication")
-    st.session_state.api_key = api_key
-    st.session_state.base_url = base_url
-    
     st.sidebar.markdown(f"## {get_text('analysis_settings')}")
-
     # Language Selection
     language = st.sidebar.selectbox(
         get_text("report_language"),
@@ -190,7 +185,13 @@ def sidebar(model) -> None:
         image = resize_image(image)
         st.session_state['image_data'] = pil_to_base64(image)
         st.session_state['image_display'] = image  # For displaying in main content
-
+    
+    st.sidebar.markdown(f"## {get_text('model_settings')}")
+    base_url = st.sidebar.text_input("API Base URL", value=BASE_URL, help="Base URL of the API server")
+    api_key = st.sidebar.text_input("API Key", help="API Key for authentication")
+    st.session_state.api_key = api_key
+    st.session_state.base_url = base_url
+    
     # Buttons
     st.sidebar.markdown("---")
     if st.sidebar.button(get_text("start_analysis")):
@@ -241,7 +242,7 @@ def main() -> None:
     if 'api_key' not in st.session_state:
         st.session_state['api_key'] = os.getenv("OPENAI_API_KEY") or ""
     if 'base_url' not in st.session_state:
-        st.session_state['base_url'] = BASE_URL or os.getenv("OPENAI_BASE_URL")
+        st.session_state['base_url'] = os.getenv("OPENAI_BASE_URL") or BASE_URL 
     if 'language' not in st.session_state:
         st.session_state['language'] = 'English'
     if 'language_code' not in st.session_state:
