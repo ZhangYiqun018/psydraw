@@ -238,7 +238,7 @@ def main() -> None:
         
     # Initialize session state variables if not present
     if 'api_key' not in st.session_state:
-        st.session_state['api_key'] = None
+        st.session_state['api_key'] = ""
     if 'base_url' not in st.session_state:
         st.session_state['base_url'] = BASE_URL
     if 'language' not in st.session_state:
