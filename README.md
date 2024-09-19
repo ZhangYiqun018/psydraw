@@ -17,15 +17,6 @@ PsychePal is an AI-powered tool designed to assist in the early detection of psy
 By leveraging Large Language Models (LLMs), PsychePal provides a scalable solution to help mental health professionals and educators quickly screen and identify potential psychological issues, enabling timely intervention and support for vulnerable children.
 
 **Important Notice:** PsychePal is intended as a screening aid only and should not replace professional psychological evaluation. All results should be interpreted and verified by qualified mental health professionals.
-# PsychePal: AI-Assisted HTP Analysis for Left-Behind Children
-
-## Project Overview
-
-PsychePal is an AI-powered tool designed to assist in the early detection of psychological issues among left-behind children through the analysis of House-Tree-Person (HTP) projective drawings. This project aims to address the widespread mental health concerns faced by children in rural areas who are separated from their parents due to economic migration.
-
-By leveraging Large Language Models (LLMs), PsychePal provides a scalable solution to help mental health professionals and educators quickly screen and identify potential psychological issues, enabling timely intervention and support for vulnerable children.
-
-**Important Notice:** PsychePal is intended as a screening aid only and should not replace professional psychological evaluation. All results should be interpreted and verified by qualified mental health professionals.
 
 ## Key Features
 
