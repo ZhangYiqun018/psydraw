@@ -1,1 +1,1 @@
-streamlit run src/Main\ Page.py
+streamlit run src/main.py

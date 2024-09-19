@@ -1,5 +1,5 @@
 {
     "streamlit": {
-        "entry": "Main Page.py"
+        "entry": "src/main.py"
     }
 }
