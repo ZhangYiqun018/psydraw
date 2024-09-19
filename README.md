@@ -1,3 +1,22 @@
+<p align="center">
+  <img src="assets/logo2.png" alt="PsychePal Logo" width="200"/>
+</p>
+
+<h1 align="center">PsychePal: AI-Assisted HTP Analysis for Left-Behind Children</h1>
+
+<p align="center">
+  <a href="https://psychepal.zeabur.app/HTP_Test">
+    <img src="https://img.shields.io/badge/Demo-Live%20Website-blue?style=for-the-badge" alt="Live Demo">
+  </a>
+</p>
+
+## Project Overview
+
+PsychePal is an AI-powered tool designed to assist in the early detection of psychological issues among left-behind children through the analysis of House-Tree-Person (HTP) projective drawings. This project aims to address the widespread mental health concerns faced by children in rural areas who are separated from their parents due to economic migration.
+
+By leveraging Large Language Models (LLMs), PsychePal provides a scalable solution to help mental health professionals and educators quickly screen and identify potential psychological issues, enabling timely intervention and support for vulnerable children.
+
+**Important Notice:** PsychePal is intended as a screening aid only and should not replace professional psychological evaluation. All results should be interpreted and verified by qualified mental health professionals.
 # PsychePal: AI-Assisted HTP Analysis for Left-Behind Children
 
 ## Project Overview
@@ -41,7 +60,7 @@ bash run.sh
 ```
 or
 ```bash
-python main.py \
+python run.py \
     --image_file example/example1.png \
     --save_path example/example1_result.json \
     --language en 
@@ -61,6 +80,10 @@ The service will run on `http://127.0.0.1:9557`. It accepts HTTP requests with `
 Launch the web demonstration:
 ```bash
 bash web_demo.sh
+```
+or
+```bash
+streamlit run src/main.py
 ```
 
 The web demo includes a built-in drawing board, supports image upload, and provides report generation and download functionality.
