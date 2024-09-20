@@ -9,9 +9,8 @@ import openai
 from langchain_community.cache import SQLiteCache
 from langchain_community.callbacks import get_openai_callback
 from langchain_core.globals import set_llm_cache
-from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.pydantic_v1 import BaseModel, Field
+from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
 
 logger = logging.getLogger(__name__)
@@ -261,13 +260,11 @@ class HTPModel(object):
             ("system", classification_prompt),
             ("user", inputs)
         ])
-        parser = JsonOutputParser(pydantic_object=ClfResult)
         with get_openai_callback() as cb:
-            chain = prompt | self.multimodal_model | parser
+            chain = prompt | self.multimodal_model.with_structured_output(ClfResult)
             result = chain.invoke({
                 "result": results["signal"],
-                "format_instructions": parser.get_format_instructions()
-            })["result"]
+            }).result
             
             if result == "true":
                 result = True
