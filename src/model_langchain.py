@@ -41,6 +41,36 @@ def encode_image(image_path):
   with open(image_path, "rb") as image_file:
     return base64.b64encode(image_file.read()).decode('utf-8')
 
+class ClfResult(BaseModel):
+    """Classification result."""
+    result: bool = Field(description="true or flase, classification result.")
+
+FIX_SIGNAL_EN="""### Assessment Opinion:
+Warning
+
+⚠️ IMPORTANT NOTICE ⚠️
+
+The analysis has detected unusually intense negative emotions in the drawing. 
+This has triggered a safety mechanism in our system.
+
+We strongly recommend seeking immediate assistance from a qualified mental health professional. 
+Your well-being is paramount, and a trained expert can provide the support you may need at this time.
+
+Remember, it's okay to ask for help. You're not alone in this. """
+
+FIX_SIGNAL_ZH="""### 评估意见:
+预警
+
+⚠️ 重要提示 ⚠️
+
+分析检测到绘画中存在异常强烈的负面情绪。
+这触发了我们的安全机制。
+
+我们强烈建议您立即寻求合格的心理健康专业人士的帮助。
+您的健康至关重要，训练有素的专家能够在此时为您提供所需的支持。
+
+请记住，寻求帮助是可以的。您并不孤单。"""
+
 class HTPModel(object):
     def __init__(self, text_model: ChatOpenAI, multimodal_model: Optional[ChatOpenAI] = None, language: str = "zh", use_cache: bool = True):
         self.text_model = text_model
@@ -222,6 +252,34 @@ class HTPModel(object):
         logger.info("signal analysis completed.")
         return result
     
+    def result_classification(self, results: dict):
+        logger.info("result classification started.")
+        classification_prompt = open(f"src/prompt/{self.language}/clf.txt", "r").read()
+        inputs = "{result}"
+        
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", classification_prompt),
+            ("user", inputs)
+        ])
+        parser = JsonOutputParser(pydantic_object=ClfResult)
+        with get_openai_callback() as cb:
+            chain = prompt | self.multimodal_model | parser
+            result = chain.invoke({
+                "result": results["signal"],
+                "format_instructions": parser.get_format_instructions()
+            })["result"]
+            
+            if result == "true":
+                result = True
+            elif result == "false":
+                result = False
+                
+            self.update_usage(cb)
+        
+        logger.info(f"result classification completed. Result: {result}")
+        
+        return result
+        
     def workflow(self, image_path: str, language: str = "zh"):
         self.refresh_usage()
         # update language
@@ -245,7 +303,12 @@ class HTPModel(object):
         results["merge"] = self.merge_analysis(results)
         results["final"] = self.final_analysis(results)
         results["signal"] = self.signal_analysis(results)
-        
+        results["classification"] = self.result_classification(results)
+        if results["classification"] == False:
+            results["fix_signal"] = FIX_SIGNAL_ZH if self.language == "zh" else FIX_SIGNAL_EN
+        else:
+            results["fix_signal"] = None
+            
         logger.info("HTP analysis workflow completed.")
         
         return results

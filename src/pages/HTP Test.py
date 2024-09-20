@@ -10,13 +10,21 @@ from PIL import Image
 from model_langchain import HTPModel
 
 # Constants
-BASE_URL = "http://api.openai.com/v1"
+BASE_URL = "https://api.openai.com/v1"
 MAX_IMAGE_SIZE = (800, 800)
 
 # Supported languages and their codes
 SUPPORTED_LANGUAGES = {
     "English": "en",
     "中文": "zh"
+}
+
+# Example
+SAMPLE_IMAGES = {
+    "example1": "example/example1.jpg",
+    "example2": "example/example2.jpg",
+    "example3": "example/example3.jpg",
+    "example4": "example/example4.jpg",
 }
 
 # Language dictionaries
@@ -34,7 +42,8 @@ LANGUAGES = {
             4. **No Aids**: Do not use rulers, erasers, or any drawing aids.
             5. **Take Your Time**: There is no time limit. Take as much time as you need.
             6. **Upload the Drawing**: Once you've completed your drawing, take a clear photo or scan it, and upload it using the sidebar.
-
+            7. **Sample Drawings**: We have prepared sample drawings from publicly available internet data for you to explore. You can find them in the sidebar.
+            
             **Note**: All information collected in this test will be kept strictly confidential.
         """,
         "upload_prompt": "👉 Please upload your drawing using the sidebar.",
@@ -59,6 +68,11 @@ LANGUAGES = {
         "analyzing_image": "Analyzing image, please wait...",
         "error_analysis": "Error during analysis: ",
         "session_reset": "Session has been reset. You can now upload a new image.",
+        "sample_drawings": "📊 Sample Drawings",
+        "load_sample": "Load Sample {}",
+        "sample_loaded": "Sample {} loaded. Click 'Start Analysis' to analyze.",
+        "error_no_api_key": "❌ Please enter your API key in the sidebar before starting the analysis.",
+        "ai_disclaimer": "NOTE: AI-generated content, for reference only. Not a substitute for medical diagnosis.",
     },
     "zh": {
         "app_title": "🏡 房树人投射绘画测试",
@@ -73,7 +87,8 @@ LANGUAGES = {
             4. **不使用辅助工具**：不要使用尺子、橡皮或任何绘画辅助工具。
             5. **不限时间**：没有时间限制，你可以尽可能多地花时间。
             6. **上传绘画**：完成绘画后，拍一张清晰的照片或扫描，然后使用侧边栏上传。
-
+            7. **样例绘画**：我们为您准备了来自互联网公开数据的样例绘画供探索。您可以在侧边栏中找到它们。
+            
             **注意**：本测试收集的所有信息将被严格保密。
         """,
         "upload_prompt": "👉 请使用侧边栏上传你的绘画作品。",
@@ -98,6 +113,11 @@ LANGUAGES = {
         "analyzing_image": "正在分析图片，请稍候...",
         "error_analysis": "分析过程中出现错误：",
         "session_reset": "会话已重置。你现在可以上传新的图片。",
+        "sample_drawings": "📊 样例绘画",
+        "load_sample": "加载样例 {}",
+        "sample_loaded": "样例 {} 已加载。点击'开始分析'进行分析。",
+        "error_no_api_key": "❌ 请在开始分析之前在侧边栏输入您的API密钥。",
+        "ai_disclaimer": "注意：本报告由AI 生成，仅供参考。不能替代医学诊断。",
     }
 }
 
@@ -111,7 +131,7 @@ def pil_to_base64(image: Image.Image, format: str = "JPEG") -> str:
     buffered = BytesIO()
     image.save(buffered, format=format)
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
-
+    
 def resize_image(image: Image.Image, max_size: tuple = MAX_IMAGE_SIZE) -> Image.Image:
     """Resize image if it exceeds max_size."""
     if image.size[0] > max_size[0] or image.size[1] > max_size[1]:
@@ -147,7 +167,8 @@ def export_report() -> None:
     if st.session_state.get('analysis_result'):
         signal = st.session_state['analysis_result'].get('signal', '')
         final_report = st.session_state['analysis_result'].get('final', '').replace("<output>", "").replace("</output>", "")
-        export_data = f"{signal}\n\n{final_report}"
+        disclaimer = get_text("ai_disclaimer")
+        export_data = f"{disclaimer}\n\n{signal}\n\n{final_report}\n\n{str(st.session_state['analysis_result'])}"
         st.sidebar.download_button(
             label=get_text("download_report"),
             data=export_data,
@@ -161,6 +182,19 @@ def sidebar(model) -> None:
     """Render sidebar components."""
     st.sidebar.image("assets/logo2.png", use_column_width=True)
     
+    st.sidebar.markdown(f"## {get_text('sample_drawings')}")
+    col1, col2 = st.sidebar.columns(2)
+    for idx, (sample_name, sample_path) in enumerate(SAMPLE_IMAGES.items()):
+        col = col1 if idx % 2 == 0 else col2
+        with col:
+            if st.button(get_text("load_sample").format(idx+1), key=f"load_sample_{idx}"):
+                with open(sample_path, "rb") as f:
+                    image = Image.open(f)
+                    image = resize_image(image)
+                    st.session_state['image_data'] = pil_to_base64(image)
+                    st.session_state['image_display'] = image
+                    st.session_state['current_sample'] = sample_name
+
     st.sidebar.markdown(f"## {get_text('analysis_settings')}")
     # Language Selection
     language = st.sidebar.selectbox(
@@ -173,7 +207,8 @@ def sidebar(model) -> None:
         # Update language in session state
         st.session_state['language'] = language
         st.session_state['language_code'] = SUPPORTED_LANGUAGES[language]
-
+        st.rerun()
+        
     # Image Upload
     uploaded_file = st.sidebar.file_uploader(
         get_text("upload_drawing"),
@@ -195,7 +230,10 @@ def sidebar(model) -> None:
     # Buttons
     st.sidebar.markdown("---")
     if st.sidebar.button(get_text("start_analysis")):
-        analyze_image(model)
+        if not st.session_state.api_key:
+            st.error(get_text("error_no_api_key"))
+        else:
+            analyze_image(model)
 
     if st.sidebar.button(get_text("reset")):
         reset_session()
@@ -225,7 +263,12 @@ def main_content() -> None:
     if st.session_state.get('analysis_result'):
         st.success(get_text("analysis_complete"))
         with st.expander(get_text("analysis_summary"), expanded=True):
-            st.write(st.session_state['analysis_result'].get('signal', get_text('error_no_image')))
+            if st.session_state['analysis_result']['classification'] is False:
+                st.write(
+                    st.session_state['analysis_result'].get('fix_signal', get_text('error_no_image'))
+                )
+            else:
+                st.write(st.session_state['analysis_result'].get('signal', get_text('error_no_image')))
     elif st.session_state.get('image_data') and not st.session_state.get('analysis_result'):
         st.warning(get_text("image_uploaded"))
 
