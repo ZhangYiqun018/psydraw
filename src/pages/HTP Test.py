@@ -229,7 +229,7 @@ def sidebar(model) -> None:
     
     st.sidebar.markdown(f"## {get_text('model_settings')}")
     base_url = st.sidebar.text_input("API Base URL", value=BASE_URL, help="Base URL of the API server")
-    api_key = st.sidebar.text_input("API Key", help="API Key for authentication")
+    api_key = st.sidebar.text_input("API Key", help="API Key for authentication", type="password")
     st.session_state.api_key = api_key
     st.session_state.base_url = base_url
     

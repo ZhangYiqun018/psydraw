@@ -30,7 +30,7 @@ LANGUAGES = {
         "start_batch_analysis": "Start Batch Analysis",
         "batch_results_summary": "Batch Analysis Results Summary",
         "download_batch_results": "Download Batch Results",
-        "enter_valid_folder": "Please enter a valid folder path.",
+        "enter_valid_folder": "Please upload images.",
         "error_no_api_key": "❌ Please enter your API key in the sidebar before starting the analysis.",
         "batch_instructions_title": "📋 Batch Analysis Instructions",
         "upload_images": "Upload Images for Batch Analysis",
@@ -42,19 +42,25 @@ LANGUAGES = {
     1. **API Key**: Ensure you have filled in your API key in the sidebar. This is crucial for the analysis to work.
     
     2. **Preparation**: 
-       - Place all images you want to analyze in a single folder.
+       - Prepare the images you want to analyze on your local device.
        - Make sure all images are in .jpg, .jpeg, or .png format.
     
-    3. **Folder Path**: Enter the full path to the folder containing your images in the text box below.
+    3. **Image Upload**: 
+       - Click on the 'Upload Images' button or drag and drop your images into the designated area.
+       - You can select multiple images at once for batch processing.
     
-    4. **Time Consideration**: Batch analysis may take a considerable amount of time, depending on the number of images. Please be patient.
+    4. **Time Consideration**: Batch analysis may take a considerable amount of time, depending on the number and size of images. Please be patient.
     
     5. **Network and API Credits**:
        - Ensure you have a stable internet connection throughout the process.
        - Check that you have sufficient API credits for the entire batch. Each image consumes credits.
     
-    6. **Results**: 
-       - Use the 'Download Batch Results' button to save the full analysis results.
+    6. **Starting Analysis**: 
+       - After uploading your images, click on the 'Start Batch Analysis' button to begin the process.
+    
+    7. **Results**: 
+       - Once the analysis is complete, use the 'Download Batch Results' button to save the full analysis results as a zip file.
+       - The zip file will contain individual reports for each image and a summary of any failed analyses.
 
     **Note**: This tool is for reference only and cannot replace professional psychological evaluation. If you have concerns, please consult a qualified mental health professional.
     """,
@@ -74,7 +80,7 @@ LANGUAGES = {
         "start_batch_analysis": "开始批量分析",
         "batch_results_summary": "批量分析结果摘要",
         "download_batch_results": "下载批量结果",
-        "enter_valid_folder": "请输入有效的文件夹路径。",
+        "enter_valid_folder": "请上传图片。",
         "error_no_api_key": "❌ 请在开始分析之前在侧边栏输入您的API密钥。",
         "batch_instructions_title": "📋 批量分析说明",
         "batch_instructions": """
@@ -83,19 +89,25 @@ LANGUAGES = {
         1. **API密钥**：确保您已在侧边栏填写了API密钥。这对分析能否进行至关重要。
         
         2. **准备工作**：
-        - 将所有要分析的图片放在同一个文件夹中。
+        - 在您的本地设备上准备好要分析的图片。
         - 确保所有图片格式为.jpg、.jpeg或.png。
         
-        3. **文件夹路径**：在下方的文本框中输入包含图片的文件夹的完整路径。
+        3. **图片上传**：
+        - 点击"上传图片"按钮或将图片拖放到指定区域。
+        - 您可以一次选择多张图片进行批量处理。
         
-        4. **时间考虑**：批量分析可能需要相当长的时间，具体取决于图片数量。请耐心等待。
+        4. **时间考虑**：批量分析可能需要相当长的时间，具体取决于图片的数量和大小。请耐心等待。
         
         5. **网络和API额度**：
         - 确保在整个过程中网络连接稳定。
         - 检查您的API额度是否足够完成整个批次。每张图片都会消耗额度。
         
-        6. **结果**：
-        - 使用"下载批量结果"按钮下载完整的分析结果。
+        6. **开始分析**：
+        - 上传图片后，点击"开始批量分析"按钮开始处理。
+        
+        7. **结果**：
+        - 分析完成后，使用"下载批量结果"按钮将完整的分析结果保存为zip文件。
+        - zip文件将包含每张图片的单独报告和任何分析失败的摘要。
 
         **注意**：此工具仅供参考，不能替代专业的心理评估。如有疑虑，请咨询合格的心理健康专业人士。
         """,
@@ -240,40 +252,24 @@ def sidebar() -> None:
         get_text("language_label"),
         options=list(SUPPORTED_LANGUAGES.keys()),
         index=list(SUPPORTED_LANGUAGES.keys()).index(st.session_state['language']),
+        key="language_selector"
     )
+        # 如果语言发生变化，更新 session_state
     if language != st.session_state['language']:
         st.session_state['language'] = language
         st.session_state['language_code'] = SUPPORTED_LANGUAGES[language]
         st.rerun()
-    
-    uploaded_files = st.sidebar.file_uploader(get_text("upload_images"), accept_multiple_files=True, type=['png', 'jpg', 'jpeg'])
-    if uploaded_files:
-        st.success(get_text("images_uploaded").format(len(uploaded_files)))
-    else:
-        st.warning(get_text("enter_valid_folder"))
-    
     # Model Settings
     st.sidebar.markdown(f"## {get_text('model_settings')}")
-    base_url = st.sidebar.text_input("API Base URL", help="Base URL of the API server")
-    api_key = st.sidebar.text_input("API Key", help="API Key for authentication")
-    st.session_state.api_key = api_key
-    st.session_state.base_url = base_url
+    st.session_state.base_url = st.sidebar.text_input("API Base URL", value=st.session_state.get('base_url', ''), key="base_url_input")
+    st.session_state.api_key = st.sidebar.text_input("API Key", value=st.session_state.get('api_key', ''), type="password", key="api_key_input")
     
     # Buttons
     st.sidebar.markdown("---")
-    if st.sidebar.button(get_text("start_batch_analysis"), type="primary"):
-        if not st.session_state.api_key:
-            st.error(get_text("error_no_api_key"))
-        else:
-            results, success = batch_analyze(uploaded_files=uploaded_files)
-            
-            zip_content = save_results(results)
-            st.download_button(
-                label = get_text("download_batch_results"),
-                data=zip_content,
-                file_name="batch_analysis_results.zip",
-                mime="application/zip"
-            )
+    st.sidebar.file_uploader(get_text("upload_images"), accept_multiple_files=True, type=['png', 'jpg', 'jpeg'], key="file_uploader")
+    
+    if st.sidebar.button(get_text("start_batch_analysis"), type="primary", key="start_analysis_button"):
+        st.session_state.start_analysis = True
     
 def batch_page():
     st.title(get_text("batch_title"))
@@ -290,9 +286,36 @@ def main():
     if 'language' not in st.session_state:
         st.session_state['language'] = "中文"
         st.session_state['language_code'] = SUPPORTED_LANGUAGES[st.session_state['language']]
+        
+    # 确保 language_selector 被初始化
+    if 'language_selector' not in st.session_state:
+        st.session_state['language_selector'] = st.session_state['language']
     
     batch_page()
     sidebar()
+    
+    uploaded_files = st.session_state.get('file_uploader')
+    if uploaded_files:
+        st.success(get_text("images_uploaded").format(len(uploaded_files)))
+    else:
+        st.warning(get_text("enter_valid_folder"))
+        
+    if st.session_state.get('start_analysis'):
+    # if st.sidebar.button(get_text("start_batch_analysis"), type="primary"):
+        if not st.session_state.api_key:
+            st.error(get_text("error_no_api_key"))
+        elif uploaded_files:
+            results, success = batch_analyze(uploaded_files=uploaded_files)
+            
+            zip_content = save_results(results)
+            st.download_button(
+                label = get_text("download_batch_results"),
+                data=zip_content,
+                file_name="batch_analysis_results.zip",
+                mime="application/zip"
+            )
+        st.session_state.start_analysis = False
+    
     
 
 if __name__ == "__main__":
