@@ -258,6 +258,7 @@ def sidebar() -> None:
     if language != st.session_state['language']:
         st.session_state['language'] = language
         st.session_state['language_code'] = SUPPORTED_LANGUAGES[language]
+        st.rerun()
     # Model Settings
     st.sidebar.markdown(f"## {get_text('model_settings')}")
     st.session_state.base_url = st.sidebar.text_input("API Base URL", value=st.session_state.get('base_url', ''), key="base_url_input")
@@ -265,7 +266,7 @@ def sidebar() -> None:
     
     # Buttons
     st.sidebar.markdown("---")
-    st.sidebar.file_uploader(get_text("upload_images"), accept_multiple_files=True, type=['png', 'jpg', 'jpeg'], key="file_uploader")
+    st.sidebar.file_uploader(get_text("upload_images"), accept_multiple_files=False, type=['png', 'jpg', 'jpeg'], key="file_uploader")
     
     if st.sidebar.button(get_text("start_batch_analysis"), type="primary", key="start_analysis_button"):
         st.session_state.start_analysis = True
