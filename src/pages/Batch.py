@@ -1,12 +1,16 @@
+import base64
 import os
 import shutil
 import tempfile
 import time
+import zipfile
+from io import BytesIO
 
 import streamlit as st
 from docx import Document
 from langchain_openai import ChatOpenAI
-import zipfile
+from PIL import Image
+
 from model_langchain import HTPModel
 
 SUPPORTED_LANGUAGES = {
@@ -29,6 +33,9 @@ LANGUAGES = {
         "enter_valid_folder": "Please enter a valid folder path.",
         "error_no_api_key": "❌ Please enter your API key in the sidebar before starting the analysis.",
         "batch_instructions_title": "📋 Batch Analysis Instructions",
+        "upload_images": "Upload Images for Batch Analysis",
+        "images_uploaded": "{} images uploaded successfully.",
+        "upload_images_prompt": "Please upload images to start batch analysis.",
     "batch_instructions": """
     **Please read the following instructions carefully before proceeding with batch analysis:**
 
@@ -96,14 +103,22 @@ LANGUAGES = {
         "batch_results": "批量分析完成，请下载结果。成功: {} | 失败: {}",
         "download_batch_results": "下载批量结果 (ZIP)",
         "ai_disclaimer": "注意：本报告由AI 生成，仅供参考。不能替代医学诊断。",
+        "upload_images": "上传图片进行批量分析",
+        "images_uploaded": "已成功上传 {} 张图片。",
+        "upload_images_prompt": "请上传图片以开始批量分析。",
     }
 }
+
+def pil_to_base64(image: Image.Image, format: str = "JPEG") -> str:
+    """Convert PIL image to base64 string."""
+    buffered = BytesIO()
+    image.save(buffered, format=format)
+    return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 def get_text(key):
     return LANGUAGES[st.session_state['language_code']][key]
 
-def save_results(results, folder_path):
-    failed_list = []
+def save_results(results):
     with tempfile.TemporaryDirectory() as temp_dir:
         for result in results:
             file_name = result['file_name']
@@ -112,17 +127,22 @@ def save_results(results, folder_path):
             result_folder = os.path.join(temp_dir, file_name_without_ext)
             os.makedirs(result_folder, exist_ok=True)
             
-            original_image_path = os.path.join(folder_path, file_name)
-            new_image_path = os.path.join(result_folder, file_name)
-            shutil.copy2(original_image_path, new_image_path)
+            # 保存上传的图片
+            if result['image']:
+                image_path = os.path.join(result_folder, file_name)
+                result['image'].save(image_path)
             
             doc = Document()
             if result['success']:
-                signal = result['analysis_result']['signal']
-                final = result['analysis_result']['final']
                 doc.add_paragraph(get_text("ai_disclaimer"))
-                doc.add_paragraph(signal)
-                doc.add_paragraph(final)
+                if result['analysis_result']['classification'] is True:
+                    signal = result['analysis_result']['signal']
+                    final = result['analysis_result']['final']
+                    doc.add_paragraph(signal)
+                    doc.add_paragraph(final)
+                else:
+                    signal = result['analysis_result']['fix_signal']
+                    doc.add_paragraph(signal)
             else:
                 doc.add_paragraph("failed")
             doc_path = os.path.join(result_folder, f"{file_name_without_ext}.docx")
@@ -146,7 +166,7 @@ def save_results(results, folder_path):
     
     return zip_content    
         
-def batch_analyze(folder_path, image_files):
+def batch_analyze(uploaded_files):
     results = []
     
     MULTIMODAL_MODEL="gpt-4o-2024-08-06"
@@ -172,37 +192,41 @@ def batch_analyze(folder_path, image_files):
         language=st.session_state['language_code'],
         use_cache=True
     )
-    progress_bar = st.progress(0, text=f"Progressing: 0/{len(image_files)}")
+    progress_bar = st.progress(0, text=f"Progressing: 0/{len(uploaded_files)}")
     start_time = time.time()
     success = 0
-    for i, image_file in enumerate(image_files):
-        image_path = os.path.join(folder_path, image_file)
+    for i, uploaded_file in enumerate(uploaded_files):
         try:
-            response = model.workflow(image_path=image_path, language=st.session_state['language_code'])
+            image = Image.open(uploaded_file)
+            image_data = pil_to_base64(image)
+            
+            response = model.workflow(image_path=image_data, language=st.session_state['language_code'])
             results.append({
-                "file_name": image_file,
+                "file_name": uploaded_file.name,
                 "analysis_result": response,
-                "success": True
+                "success": True,
+                "image": image
             })
             success += 1
         except Exception as e:
             results.append({
-                "file_name": image_file,
+                "file_name": uploaded_file.name,
                 "analysis_result": str(e),
-                "success": False
+                "success": False,
+                "image": image
             })
         
         elapsed_time = time.time() - start_time
-        progress = (i + 1) / len(image_files)
+        progress = (i + 1) / len(uploaded_files)
         estimated_total_time = elapsed_time / progress if progress > 0 else 0
         remaining_time = estimated_total_time - elapsed_time
         
         elapsed_str = time.strftime("%H:%M:%S", time.gmtime(elapsed_time))
         remaining_str = time.strftime("%H:%M:%S", time.gmtime(remaining_time))
         
-        progress_bar.progress(progress, text=f"Progressing: {i + 1}/{len(image_files)} | Elapsed: {elapsed_str} | Remaining: {remaining_str}")
+        progress_bar.progress(progress, text=f"Progressing: {i + 1}/{len(uploaded_files)} | Elapsed: {elapsed_str} | Remaining: {remaining_str}")
     
-    st.success(get_text("batch_results").format(success, len(image_files) - success))
+    st.success(get_text("batch_results").format(success, len(uploaded_files) - success))
     
     return results, success
 
@@ -222,15 +246,9 @@ def sidebar() -> None:
         st.session_state['language_code'] = SUPPORTED_LANGUAGES[language]
         st.rerun()
     
-    folder_path = st.sidebar.text_input(get_text("select_folder"))
-    
-    if folder_path and os.path.isdir(folder_path):
-        image_files = [f for f in os.listdir(folder_path) if f.lower().endswith(('.png', '.jpg', '.jpeg'))]
-        
-        if not image_files:
-            st.warning(get_text("no_images_found"))
-        else:
-            st.success(get_text("images_found").format(len(image_files)))
+    uploaded_files = st.sidebar.file_uploader(get_text("upload_images"), accept_multiple_files=True, type=['png', 'jpg', 'jpeg'])
+    if uploaded_files:
+        st.success(get_text("images_uploaded").format(len(uploaded_files)))
     else:
         st.warning(get_text("enter_valid_folder"))
     
@@ -247,9 +265,9 @@ def sidebar() -> None:
         if not st.session_state.api_key:
             st.error(get_text("error_no_api_key"))
         else:
-            results, success = batch_analyze(folder_path=folder_path, image_files=image_files)
+            results, success = batch_analyze(uploaded_files=uploaded_files)
             
-            zip_content = save_results(results, folder_path)
+            zip_content = save_results(results)
             st.download_button(
                 label = get_text("download_batch_results"),
                 data=zip_content,

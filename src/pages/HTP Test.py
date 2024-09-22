@@ -165,10 +165,16 @@ def reset_session() -> None:
 
 def export_report() -> None:
     if st.session_state.get('analysis_result'):
-        signal = st.session_state['analysis_result'].get('signal', '')
-        final_report = st.session_state['analysis_result'].get('final', '').replace("<output>", "").replace("</output>", "")
-        disclaimer = get_text("ai_disclaimer")
-        export_data = f"{disclaimer}\n\n{signal}\n\n{final_report}"
+        if st.session_state["analysis_result"]['classification'] is True:
+            signal = st.session_state['analysis_result'].get('signal', '')
+            final_report = st.session_state['analysis_result'].get('final', '').replace("<output>", "").replace("</output>", "")
+            disclaimer = get_text("ai_disclaimer")
+            export_data = f"{disclaimer}\n\n{signal}\n\n{final_report}"
+        else:
+            signal = st.session_state['analysis_result'].get('fix_signal', '')
+            disclaimer = get_text("ai_disclaimer")
+            export_data = f"{disclaimer}\n\n{signal}"
+            
         st.sidebar.download_button(
             label=get_text("download_report"),
             data=export_data,
