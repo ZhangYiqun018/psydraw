@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 
 class MethodList(BaseModel):
     method: List[str]
@@ -26,3 +26,5 @@ class HTPOutput(BaseModel):
     final: str
     signal: str
     usage: Usage
+    classification: Optional[bool]
+    fix_signal: Optional[str] = None

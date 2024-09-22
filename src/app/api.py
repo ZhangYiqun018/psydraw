@@ -41,7 +41,9 @@ def create_app(model):
                 ),
                 merge=result["merge"],
                 final=result["final"],
-                signal=result["signal"]
+                signal=result["signal"],
+                classification=result["classification"],
+                fix_signal=result["fix_signal"]
             )
 
             return result
