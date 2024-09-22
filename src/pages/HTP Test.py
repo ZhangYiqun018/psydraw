@@ -113,7 +113,7 @@ LANGUAGES = {
         "analyzing_image": "正在分析图片，请稍候...",
         "error_analysis": "分析过程中出现错误：",
         "session_reset": "会话已重置。你现在可以上传新的图片。",
-        "sample_drawings": "📊 样例绘画",
+        "sample_drawings": "📊 绘画样例",
         "load_sample": "加载样例 {}",
         "sample_loaded": "样例 {} 已加载。点击'开始分析'进行分析。",
         "error_no_api_key": "❌ 请在开始分析之前在侧边栏输入您的API密钥。",
@@ -168,7 +168,7 @@ def export_report() -> None:
         signal = st.session_state['analysis_result'].get('signal', '')
         final_report = st.session_state['analysis_result'].get('final', '').replace("<output>", "").replace("</output>", "")
         disclaimer = get_text("ai_disclaimer")
-        export_data = f"{disclaimer}\n\n{signal}\n\n{final_report}\n\n{str(st.session_state['analysis_result'])}"
+        export_data = f"{disclaimer}\n\n{signal}\n\n{final_report}"
         st.sidebar.download_button(
             label=get_text("download_report"),
             data=export_data,

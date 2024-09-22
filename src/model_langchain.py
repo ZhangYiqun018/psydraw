@@ -130,7 +130,6 @@ class HTPModel(object):
             analysis_input = "Please analyze the features based on professional knowledge and the image features provided by the assistant, and organize the results in markdown format."
             
         # 判断输入是 base64 还是路径
-        logger.info(f"{is_base64_or_path(image_path)}")
         if is_base64_or_path(image_path) == "path":
             image_data = encode_image(image_path)
         elif is_base64_or_path(image_path) == "base64":
