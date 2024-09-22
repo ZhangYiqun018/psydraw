@@ -258,7 +258,6 @@ def sidebar() -> None:
     if language != st.session_state['language']:
         st.session_state['language'] = language
         st.session_state['language_code'] = SUPPORTED_LANGUAGES[language]
-        st.rerun()
     # Model Settings
     st.sidebar.markdown(f"## {get_text('model_settings')}")
     st.session_state.base_url = st.sidebar.text_input("API Base URL", value=st.session_state.get('base_url', ''), key="base_url_input")
