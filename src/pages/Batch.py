@@ -121,6 +121,10 @@ LANGUAGES = {
     }
 }
 
+@st.cache_resource
+def get_uploaded_files():
+    return []
+
 def pil_to_base64(image: Image.Image, format: str = "JPEG") -> str:
     """Convert PIL image to base64 string."""
     buffered = BytesIO()
@@ -266,7 +270,7 @@ def sidebar() -> None:
     
     # Buttons
     st.sidebar.markdown("---")
-    st.sidebar.file_uploader(get_text("upload_images"), accept_multiple_files=False, type=['png', 'jpg', 'jpeg'], key="file_uploader")
+    # st.sidebar.file_uploader(get_text("upload_images"), accept_multiple_files=True, type=['png', 'jpg', 'jpeg'], key="file_uploader")
     
     if st.sidebar.button(get_text("start_batch_analysis"), type="primary", key="start_analysis_button"):
         st.session_state.start_analysis = True
@@ -291,14 +295,16 @@ def main():
     if 'language_selector' not in st.session_state:
         st.session_state['language_selector'] = st.session_state['language']
     
-    batch_page()
-    sidebar()
     
-    uploaded_files = st.session_state.get('file_uploader')
+    sidebar()
+    batch_page()
+    
+    uploaded_files = st.file_uploader(get_text("upload_images"), accept_multiple_files=True, type=['png', 'jpg', 'jpeg'], key="file_uploader")
+    status_placeholder = st.empty()
     if uploaded_files:
-        st.success(get_text("images_uploaded").format(len(uploaded_files)))
-    else:
-        st.warning(get_text("enter_valid_folder"))
+        cached_files = get_uploaded_files()
+        cached_files.extend(uploaded_files)
+        status_placeholder.success(get_text("images_uploaded").format(len(cached_files)))
         
     if st.session_state.get('start_analysis'):
     # if st.sidebar.button(get_text("start_batch_analysis"), type="primary"):
