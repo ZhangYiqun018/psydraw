@@ -110,7 +110,7 @@ def main():
     if language != st.session_state['language']:
         st.session_state['language'] = language
         st.session_state['language_code'] = SUPPORTED_LANGUAGES[language]
-        st.experimental_rerun()
+        st.rerun()
         
     # Drawing Settings
     drawing_mode = st.sidebar.selectbox(
