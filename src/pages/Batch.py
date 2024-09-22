@@ -1,15 +1,11 @@
-import base64
 import os
 import shutil
 import tempfile
 import time
-from io import BytesIO
 
-import pandas as pd
 import streamlit as st
 from docx import Document
 from langchain_openai import ChatOpenAI
-from PIL import Image
 import zipfile
 from model_langchain import HTPModel
 

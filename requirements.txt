@@ -6,8 +6,8 @@ numpy==1.26.0
 openai==1.46.1
 Pillow==10.4.0
 pydantic==2.9.2
+python_docx==1.1.2
 Requests==2.32.3
 streamlit==1.36.0
 streamlit_drawable_canvas==0.9.3
 uvicorn==0.30.6
-python-docx
