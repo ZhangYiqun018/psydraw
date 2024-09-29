@@ -285,7 +285,7 @@ def main_content() -> None:
 # Main app
 def main() -> None:
     """Main application entry point."""
-    st.set_page_config(page_title="PsychePal: HTP Test", page_icon="🏡", layout="wide")
+    st.set_page_config(page_title="PsyDraw: HTP Test", page_icon="🏡", layout="wide")
         
     # Initialize session state variables if not present
     if 'api_key' not in st.session_state:

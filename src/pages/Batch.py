@@ -285,11 +285,13 @@ def batch_page():
     
     
 def main():
-    st.set_page_config(page_title="PsychePal: Batch Analysis", page_icon="📊", layout="wide")
+    st.set_page_config(page_title="PsyDraw: Batch Analysis", page_icon="📊", layout="wide")
     
-    if 'language' not in st.session_state:
-        st.session_state['language'] = "中文"
+    if 'language_code' not in st.session_state:
         st.session_state['language_code'] = SUPPORTED_LANGUAGES[st.session_state['language']]
+
+    if 'language' not in st.session_state:
+        st.session_state['language'] = "English"
         
     # 确保 language_selector 被初始化
     if 'language_selector' not in st.session_state:

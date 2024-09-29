@@ -1,22 +1,24 @@
 <p align="center">
-  <img src="assets/logo2.png" alt="PsychePal Logo" width="200"/>
+  <img src="assets/logo2.png" alt="PsyDraw Logo" width="200"/>
 </p>
 
-<h1 align="center">PsychePal: AI-Assisted HTP Analysis for Left-Behind Children</h1>
+<h1 align="center">PsyDraw: A Multi-Agent Multimodal System for Mental Health Detection in Left-Behind Children</h1>
 
 <p align="center">
-  <a href="https://psychepal.zeabur.app/HTP_Test">
+  <a href="https://psysraw.zeabur.app/HTP_Test">
     <img src="https://img.shields.io/badge/Demo-Live%20Website-blue?style=for-the-badge" alt="Live Demo">
   </a>
 </p>
 
 ## Project Overview
+Left-behind children (LBC) face severe mental health challenges due to parental migration for work. The House-Tree-Person (HTP) test, a psychological assessment method with higher child participation and cooperation, requires expert interpretation, limiting its application in resource-scarce areas. To address this, we propose **PsyDraw**, a multi-agent system based on Multimodal Large Language Models for automated analysis of HTP drawings and assessment of LBC's mental health status. The system's workflow comprises two main stages: feature analysis and report generation, accomplished by multiple collaborative agents. We evaluate the system on HTP drawings from 290 primary school students, with the generated mental health reports evaluated by class teachers. Results show that 71.03\% of the analyses are rated as **Matching**, 26.21\% as **Generally Matching**, and only 2.41\% as **Not Matching**. These findings demonstrate the potential of PsyDraw in automating HTP test analysis, offering an innovative solution to the shortage of professional personnel in mental health assessment for LBC.
 
-PsychePal is an AI-powered tool designed to assist in the early detection of psychological issues among left-behind children through the analysis of House-Tree-Person (HTP) projective drawings. This project aims to address the widespread mental health concerns faced by children in rural areas who are separated from their parents due to economic migration.
+**Important Notice:** PsyDraw is intended as a screening aid only and should not replace professional psychological evaluation. All results should be interpreted and verified by qualified mental health professionals.
 
-By leveraging Large Language Models (LLMs), PsychePal provides a scalable solution to help mental health professionals and educators quickly screen and identify potential psychological issues, enabling timely intervention and support for vulnerable children.
-
-**Important Notice:** PsychePal is intended as a screening aid only and should not replace professional psychological evaluation. All results should be interpreted and verified by qualified mental health professionals.
+<p align="center">
+  <img src="assets/workflow.png" alt="PsyDraw Workflow"/>
+  Figure1: The workflow of PsyDraw.
+</p>
 
 ## Key Features
 
@@ -29,8 +31,8 @@ By leveraging Large Language Models (LLMs), PsychePal provides a scalable soluti
 
 1. Clone the repository:
 ```
-git clone https://github.com/ZhangYiqun018/psychepal.git
-cd psychepal
+git clone https://github.com/ZhangYiqun018/psysraw.git
+cd PsyDraw
 ```
 
 2. Install dependencies:
@@ -86,8 +88,8 @@ This project is licensed under the GPL-3.0 License. See the [LICENSE](LICENSE) f
 
 ## Disclaimer
 
-PsychePal is a research and screening aid tool only. It should not be used as a diagnostic tool or a substitute for professional medical advice. Users assume full responsibility for any decisions or actions based on the use of this tool.
+PsyDraw is a research and screening aid tool only. It should not be used as a diagnostic tool or a substitute for professional medical advice. Users assume full responsibility for any decisions or actions based on the use of this tool.
 
 ## Ethical Considerations
 
-The psychological well-being of children is a sensitive and critical matter. PsychePal is designed to support, not replace, the crucial role of mental health professionals and caregivers. Users must ensure that the tool is used ethically, maintaining the privacy and best interests of the children at all times.
+The psychological well-being of children is a sensitive and critical matter. PsyDraw is designed to support, not replace, the crucial role of mental health professionals and caregivers. Users must ensure that the tool is used ethically, maintaining the privacy and best interests of the children at all times.

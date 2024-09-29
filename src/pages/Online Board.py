@@ -86,7 +86,7 @@ def numpy_to_bytes(array, format="PNG"):
 def main():
     # Page Configuration
     st.set_page_config(
-        page_title="PsychePal: HTP Online Drawing Board",
+        page_title="PsyDraw: HTP Online Drawing Board",
         page_icon="🖌️",
         layout="wide"
     )
