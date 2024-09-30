@@ -128,7 +128,7 @@ def main_page():
 
     st.write(f"## {get_text('evaluation_results')}")
     results_data = {
-        "Category": ["Match", "Generally Match", "Not Match"],
+        "Category": ["Matching", "Generally Matching", "Not Matching"],
         "Total (%)": [71.03, 26.21, 2.41],
         "Warn. (%)": [58.89, 26.21, 4.44],
         "Obs. (%)": [76.50, 22.00, 1.50]
