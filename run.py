@@ -45,6 +45,7 @@ model = HTPModel(
 
 result = model.workflow(
     image_path=config.image_file,
+    language=config.language
 )
 
 # save the result to a file

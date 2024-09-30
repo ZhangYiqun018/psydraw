@@ -81,6 +81,11 @@ streamlit run src/main.py
 
 The web demo includes a built-in drawing board, supports image upload, and provides report generation and download functionality.
 
+## Case Study
+<p float="left">
+  <img src="assets/case_study1.png" width="45%" />
+  <img src="assets/case_study2.png" width="45%" /> 
+</p>
 
 ## License
 

@@ -7,7 +7,7 @@ def get_text(key):
 
 translations = {
     "English": {
-        "title": "PsyDraw: Multimodal Large Language Models for Early Mental Health Detection in Left-Behind Children",
+        "title": "PsyDraw: A Multi-Agent Multimodal System for Mental Health Detection in Left-Behind Children",
         "introduction": "Introduction of HTP Test",
         "introduction_content": "The House-Tree-Person (HTP) test is a projective psychological assessment tool applicable to both children and adults aged 3 and above. This test aims to provide insights into an individual's personality, emotions, and attitudes through the analysis of drawings. In the HTP test procedure, participants are instructed to draw a house, a tree, and a person. Researchers analyze HTP drawings to evaluate cognitive, emotional, and social functioning, interpreting depicted elements as reflections of hidden emotions, desires, and internal conflicts not easily discerned through direct methods.",
         "available_features": """
@@ -54,9 +54,9 @@ translations = {
         "footer": "© 2024 PsyDraw. All rights reserved.",
     },
     "中文": {
-        "title": "PsyDraw: Multimodal Large Language Models for Early Mental Health Detection in Left-Behind Children",
+        "title": "PsyDraw: A Multi-Agent Multimodal System for Mental Health Detection in Left-Behind Children",
         "introduction": "房树人介绍",
-        "introduction_content": "房屋-树木-人物（HTP）测试是一种适用于3岁及以上儿童和成人的投射性心理评估工具。该测试旨在通过分析绘画来深入了解个体的人格、情感和态度。在HTP测试过程中，参与者被要求画一栋房子、一棵树和一个人。研究人员分析HTP绘画以评估认知、情感和社交功能，将所描绘的元素解读为难以通过直接方法察觉的隐藏情感、欲望和内部冲突的反映。",
+        "introduction_content": "房-树-人（HTP）测试是一种适用于3岁及以上儿童和成人的投射性心理评估工具。该测试旨在通过分析绘画来深入了解个体的人格、情感和态度。在HTP测试过程中，参与者被要求画一栋房子、一棵树和一个人。研究人员分析HTP绘画以评估认知、情感和社交功能，将所描绘的元素解读为难以通过直接方法察觉的隐藏情感、欲望和内部冲突的反映。",
         "available_features": """
         **可用功能：** 
         - **Batch**：批量分析多个HTP图纸 
@@ -142,7 +142,13 @@ def main_page():
     st.write(get_text('limitation_content'))
 
     st.write(f"## {get_text('case_study')}")
-    st.write("Case study content will be added here.")
+    col1, col2 = st.columns(2)
+    with col1:
+        case1 = Image.open("assets/case_study1.png")
+        st.image(case1, use_column_width=True)
+    with col2:
+        case2 = Image.open("assets/case_study2.png")
+        st.image(case2, use_column_width=True)
 
     # 页脚
     st.markdown("---")
