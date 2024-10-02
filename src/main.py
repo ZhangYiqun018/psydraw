@@ -11,6 +11,8 @@ translations = {
         "introduction": "Introduction of HTP Test",
         "introduction_content": "The House-Tree-Person (HTP) test is a projective psychological assessment tool applicable to both children and adults aged 3 and above. This test aims to provide insights into an individual's personality, emotions, and attitudes through the analysis of drawings. In the HTP test procedure, participants are instructed to draw a house, a tree, and a person. Researchers analyze HTP drawings to evaluate cognitive, emotional, and social functioning, interpreting depicted elements as reflections of hidden emotions, desires, and internal conflicts not easily discerned through direct methods.",
         "available_features": """
+        We provide the necessary **API key** and **base URL** for **PsyDraw** in the ***supplementary materials***.
+        
         **Available Features:**
         - **Batch Analysis**: Analyze multiple HTP drawings in bulk
         - **HTP Test**: Take the House-Tree-Person test online
@@ -58,6 +60,8 @@ translations = {
         "introduction": "房树人介绍",
         "introduction_content": "房-树-人（HTP）测试是一种适用于3岁及以上儿童和成人的投射性心理评估工具。该测试旨在通过分析绘画来深入了解个体的人格、情感和态度。在HTP测试过程中，参与者被要求画一栋房子、一棵树和一个人。研究人员分析HTP绘画以评估认知、情感和社交功能，将所描绘的元素解读为难以通过直接方法察觉的隐藏情感、欲望和内部冲突的反映。",
         "available_features": """
+        注意: 我们在***支撑材料***中提供了**PsyDraw**所需的**API密钥**和**BaseURL**。
+        
         **可用功能：** 
         - **Batch**：批量分析多个HTP图纸 
         - **HTP Test**：在线进行房树人测试 
