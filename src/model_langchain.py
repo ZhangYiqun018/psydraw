@@ -261,44 +261,37 @@ class HTPModel(object):
         ])
         with get_openai_callback() as cb:
             # chain = prompt | self.multimodal_model.with_structured_output(ClfResult)
-            while True:
-                from langchain_core.output_parsers import JsonOutputParser
-                
-                parse = JsonOutputParser(pydantic_object=ClfResult)
-                chain = prompt | self.multimodal_model | parse
-                result = chain.invoke({
-                    "result": results["signal"],
-                    "format_instructions": parse.get_format_instructions()
-                })
-                
-                if type(result) == dict:
-                    print("dict")
-                    result = result["result"]
-                if type(result) == str:
-                    print("str")
-                    if result == "true":
-                        result = True
-                    elif result == "false":
-                        result = False
-                    if "true" in result:
-                        result = True
-                    if "False" in result:
-                        result = False
-                if type(result) == bool:
-                    print("bool")
-                    break
-                
-                self.update_usage(cb)
+            from langchain_core.output_parsers import JsonOutputParser
+            
+            parse = JsonOutputParser(pydantic_object=ClfResult)
+            chain = prompt | self.multimodal_model | parse
+            result = chain.invoke({
+                "result": results["signal"],
+                "format_instructions": parse.get_format_instructions()
+            })
+            
+            if type(result) == dict:
+                print("dict")
+                result = result["result"]
+            if type(result) == str:
+                print("str")
+                if result == "true":
+                    result = True
+                elif result == "false":
+                    result = False
+                if "true" in result:
+                    result = True
+                if "False" in result:
+                    result = False
 
-                if result in [True, False]:
-                    break
-                else:
-                    logger.info(f"Invalid classification result: {result}. Retry.")
-                    continue
+            
+            self.update_usage(cb)
                 
         logger.info(f"result classification completed. Result: {result}")
-        
-        return result
+        if type(result) == bool:
+            return result
+        else:
+            return True
         
     def workflow(self, image_path: str, language: str = "zh"):
         self.refresh_usage()
