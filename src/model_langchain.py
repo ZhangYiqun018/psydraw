@@ -279,11 +279,6 @@ class HTPModel(object):
                     result = True
                 elif result == "false":
                     result = False
-                if "true" in result:
-                    result = True
-                if "False" in result:
-                    result = False
-
             
             self.update_usage(cb)
                 
