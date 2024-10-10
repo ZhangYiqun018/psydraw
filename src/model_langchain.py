@@ -274,13 +274,17 @@ class HTPModel(object):
                 if type(result) == dict:
                     print("dict")
                     result = result["result"]
-                elif type(result) == str:
+                if type(result) == str:
                     print("str")
                     if result == "true":
                         result = True
                     elif result == "false":
                         result = False
-                elif type(result) == bool:
+                    if "true" in result:
+                        result = True
+                    if "False" in result:
+                        result = False
+                if type(result) == bool:
                     print("bool")
                     break
                 
