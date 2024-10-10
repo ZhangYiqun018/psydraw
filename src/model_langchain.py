@@ -257,21 +257,41 @@ class HTPModel(object):
         
         prompt = ChatPromptTemplate.from_messages([
             ("system", classification_prompt),
-            ("user", inputs)
+            ("user", inputs + "{format_instructions}")
         ])
         with get_openai_callback() as cb:
-            chain = prompt | self.multimodal_model.with_structured_output(ClfResult)
-            result = chain.invoke({
-                "result": results["signal"],
-            }).result
-            
-            if result == "true":
-                result = True
-            elif result == "false":
-                result = False
+            # chain = prompt | self.multimodal_model.with_structured_output(ClfResult)
+            while True:
+                from langchain_core.output_parsers import JsonOutputParser
                 
-            self.update_usage(cb)
-        
+                parse = JsonOutputParser(pydantic_object=ClfResult)
+                chain = prompt | self.multimodal_model | parse
+                result = chain.invoke({
+                    "result": results["signal"],
+                    "format_instructions": parse.get_format_instructions()
+                })
+                
+                if type(result) == dict:
+                    print("dict")
+                    result = result["result"]
+                elif type(result) == str:
+                    print("str")
+                    if result == "true":
+                        result = True
+                    elif result == "false":
+                        result = False
+                elif type(result) == bool:
+                    print("bool")
+                    break
+                
+                self.update_usage(cb)
+
+                if result in [True, False]:
+                    break
+                else:
+                    logger.info(f"Invalid classification result: {result}. Retry.")
+                    continue
+                
         logger.info(f"result classification completed. Result: {result}")
         
         return result
