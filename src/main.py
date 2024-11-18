@@ -134,7 +134,7 @@ def main_page():
     results_data = {
         "Category": ["Matching", "Generally Matching", "Not Matching"],
         "Total (%)": [71.03, 26.21, 2.41],
-        "Warn. (%)": [58.89, 26.21, 4.44],
+        "Warn. (%)": [58.89, 35.56, 4.44],
         "Obs. (%)": [76.50, 22.00, 1.50]
     }
     df = pd.DataFrame(results_data)
