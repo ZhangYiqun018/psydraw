@@ -5,8 +5,8 @@ from PIL import Image, ImageTk
 from langchain_openai import ChatOpenAI
 from datetime import datetime
 import webbrowser
+import traceback
 
-# 引用现有的HTPModel
 from src.model_langchain import HTPModel
 
 class HTPAnalyzer:
@@ -300,7 +300,8 @@ For more information, visit our website / 更多信息，请访问我们的网�
             
         except Exception as e:
             self.update_status("Analysis failed / 分析失败")
-            messagebox.showerror("Error", f"Analysis failed: {str(e)}")
+            error_info = traceback.format_exc()
+            messagebox.showerror("Error", f"Analysis failed: {str(e)}\n\n{error_info}")
 
     def create_language_selector(self, parent):
         lang_frame = ttk.Frame(parent)
