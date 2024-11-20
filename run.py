@@ -1,6 +1,7 @@
 import argparse
 import json
 import os
+from dotenv import load_dotenv
 
 from langchain_openai import ChatOpenAI
 
@@ -17,6 +18,7 @@ def get_args():
     
     return parser.parse_args()
 
+load_dotenv()
 config = get_args()
 
 assert config.language in ["zh", "en"], "Language should be either 'zh' or 'en'."
