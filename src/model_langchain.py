@@ -105,17 +105,17 @@ class HTPModel(object):
         assert stage in ["overall", "house", "tree", "person"], "Stage should be either 'overall', 'house', 'tree', or 'person'."
 
         if stage == "overall":
-            feature_prompt = open(f"src/prompt/{self.language}/overall_feature.txt", "r").read()
-            analysis_prompt = open(f"src/prompt/{self.language}/overall_analysis.txt", "r").read()
+            feature_prompt = open(f"src/prompt/{self.language}/overall_feature.txt", "r", encoding="utf-8").read()
+            analysis_prompt = open(f"src/prompt/{self.language}/overall_analysis.txt", "r", encoding="utf-8").read()
         elif stage == "house":
-            feature_prompt = open(f"src/prompt/{self.language}/house_feature.txt", "r").read()
-            analysis_prompt = open(f"src/prompt/{self.language}/house_analysis.txt", "r").read()
+            feature_prompt = open(f"src/prompt/{self.language}/house_feature.txt", "r", encoding="utf-8").read()
+            analysis_prompt = open(f"src/prompt/{self.language}/house_analysis.txt", "r", encoding="utf-8").read()
         elif stage == "tree":
-            feature_prompt = open(f"src/prompt/{self.language}/tree_feature.txt", "r").read()
-            analysis_prompt = open(f"src/prompt/{self.language}/tree_analysis.txt", "r").read()
+            feature_prompt = open(f"src/prompt/{self.language}/tree_feature.txt", "r", encoding="utf-8").read()
+            analysis_prompt = open(f"src/prompt/{self.language}/tree_analysis.txt", "r", encoding="utf-8").read()
         elif stage == "person":
-            feature_prompt = open(f"src/prompt/{self.language}/person_feature.txt", "r").read()
-            analysis_prompt = open(f"src/prompt/{self.language}/person_analysis.txt", "r").read()
+            feature_prompt = open(f"src/prompt/{self.language}/person_feature.txt", "r", encoding="utf-8").read()
+            analysis_prompt = open(f"src/prompt/{self.language}/person_analysis.txt", "r", encoding="utf-8").read()
             
         return feature_prompt, analysis_prompt
     
@@ -178,8 +178,8 @@ class HTPModel(object):
     
     def merge_analysis(self, results: dict):
         logger.info("merge analysis started.")
-        merge_prompt = open(f"src/prompt/{self.language}/analysis_merge.txt", "r").read()
-        merge_inputs = open(f"src/prompt/{self.language}/merge_format.txt", "r").read()
+        merge_prompt = open(f"src/prompt/{self.language}/analysis_merge.txt", "r", encoding="utf-8").read()
+        merge_inputs = open(f"src/prompt/{self.language}/merge_format.txt", "r", encoding="utf-8").read()
         
         prompt = ChatPromptTemplate.from_messages([
             ("system", merge_prompt),
@@ -206,7 +206,7 @@ class HTPModel(object):
     
     def final_analysis(self, results: dict):
         logger.info("final analysis started.")
-        final_prompt = open(f"src/prompt/{self.language}/final_result.txt", "r").read()
+        final_prompt = open(f"src/prompt/{self.language}/final_result.txt", "r", encoding="utf-8").read()
         
         if self.language == "zh":
             inputs = "综合分析结果: \n{merge_result}\n，输出你的专业HTP测试意见书。"
@@ -231,7 +231,7 @@ class HTPModel(object):
     
     def signal_analysis(self, results: dict):
         logger.info("signal analysis started.")
-        signal_prompt = open(f"src/prompt/{self.language}/signal_judge.txt", "r").read()
+        signal_prompt = open(f"src/prompt/{self.language}/signal_judge.txt", "r", encoding="utf-8").read()
         inputs = "{final_result}"
         
         prompt = ChatPromptTemplate.from_messages([
@@ -252,7 +252,7 @@ class HTPModel(object):
     
     def result_classification(self, results: dict):
         logger.info("result classification started.")
-        classification_prompt = open(f"src/prompt/{self.language}/clf.txt", "r").read()
+        classification_prompt = open(f"src/prompt/{self.language}/clf.txt", "r", encoding="utf-8").read()
         inputs = "{result}"
         
         prompt = ChatPromptTemplate.from_messages([
