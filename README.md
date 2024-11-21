@@ -79,8 +79,14 @@ or
 streamlit run src/main.py
 ```
 
-The web demo includes a built-in drawing board, supports image upload, and provides report generation and download functionality.
+The web demo inc
 
+### 4. Packaging the Application
+Use PyInstaller to package the application:
+```bash
+pyinstaller htp_analyzer.spec
+```
+This will generate an executable file located in the `dist/htp_analyzer` directory. You can run the executable to start the HTP Analyzer.
 ## Case Study
 <p float="left">
   <img src="assets/case_study1.png" width="45%" />
